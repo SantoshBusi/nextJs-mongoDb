@@ -158,32 +158,32 @@ export default function dynamicForm(props, db_1) {
         </center>
     )
 }
-export async function getStaticPaths() {
-    console.log("Called")
-    const client = await clientPromise;
-    const db = client.db("my_db");
-    const db_1 = await db
-        .collection("db_1")
-        .find({})
-        .sort({ metacritic: -1 })
-        .limit(1000)
-        .toArray();
-    const data = JSON.parse(JSON.stringify(db_1))
+// export async function getStaticPaths() {
+//     console.log("Called")
+//     const client = await clientPromise;
+//     const db = client.db("my_db");
+//     const db_1 = await db
+//         .collection("db_1")
+//         .find({})
+//         .sort({ metacritic: -1 })
+//         .limit(1000)
+//         .toArray();
+//     const data = JSON.parse(JSON.stringify(db_1))
 
-    const paths = data.map(item => ({
-        params: {
-            dynamic: item.fId
-        }
-    }))
+//     const paths = data.map(item => ({
+//         params: {
+//             dynamic: item.fId
+//         }
+//     }))
 
-    return {
-        paths,
-        fallback: false
-    }
-};
+//     return {
+//         paths,
+//         fallback: false
+//     }
+// };
 
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
     const { params } = context
     try {
         const client = await clientPromise;
@@ -191,9 +191,7 @@ export async function getStaticProps(context) {
 
         const db_1 = await db
             .collection("db_1")
-            .find({})
-            .sort({ metacritic: -1 })
-            .limit(1000)
+            .find()
             .toArray();
 
         return {
