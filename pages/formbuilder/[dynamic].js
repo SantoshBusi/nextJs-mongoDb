@@ -7,7 +7,7 @@ import clientPromise from "../../lib/mongodb";
 
 
 export default function dynamicForm(props, db_1) {
-    // console.log(props)
+    console.log(Object.values(props)[0])
     const router = useRouter()
     // console.log(router.query.dynamic)
     const [data, setData] = useState(Object.values(props))
@@ -15,7 +15,7 @@ export default function dynamicForm(props, db_1) {
     const [dataSource, setDataSource] = useState([])
     const [modalEdit, setModalEdit] = useState()
     const [input] = Form.useForm()
-    const [dataSourceData,setDataSourceData]= useState([])
+    const [dataSourceData, setDataSourceData] = useState([])
     const [griddata, setGriddata] = useState();
     //  let arr = Object.values(props)
     //     arr.map((dbData) => {
@@ -29,10 +29,12 @@ export default function dynamicForm(props, db_1) {
 
     useEffect(() => {
         let arr = [];
-        let arr1 = [...columns]
+        let arr1 = []
+        let obj
         data[0].map(items => {
             if (items.fId === router.query.dynamic) {
-               
+                //    console.log(items.fields)
+                obj = items
                 items.fields.map((col) => {
 
                     arr1.push({
@@ -40,59 +42,60 @@ export default function dynamicForm(props, db_1) {
                         dataIndex: col.fieldName
                     })
                     // console.log(arr)
-                   
+
                 })
                 items.fieldValues.map(it => {
                     arr.push(it);
                 })
-               
-                setData(items)
-               
+
+
+
             }
-            
+
         })
+        setData(obj)
         setColumns(arr1)
         setGriddata(arr);
-       
+
     }, []);
-// console.log(griddata)
+    // console.log(griddata)
     const edit = (key) => {
         setModalEdit(true)
         setDataSource(data.fields)
-        
-    
-      }
-      const editCancel = () => {
+
+
+    }
+    const editCancel = () => {
         setModalEdit(false)
-      }
-      const editOk = (key) => {
+    }
+    const editOk = (key) => {
         //   console.log(data)
         setModalEdit(false)
-        const val=input.getFieldsValue(true)
+        const val = input.getFieldsValue(true)
         // const ds=[]
         // dataSource.push(...dataSourceData,val)
-    
+
         //  setDataSourceData(ds)
-         const retrievedData=props.db_1
-   let arr =[]
+        const retrievedData = props.db_1
+        let arr = []
         // const retrievedData = JSON.parse(localStorage.getItem('Formdata'))
-        retrievedData.map((s, ind)=>{
+        retrievedData.map((s, ind) => {
             console.log(s)
-          if(s.fId===router.query.dynamic){
-            s.fieldValues.push(val)
-            s.fieldValues.map(it => {
-                arr.push(it)
-            })
-          }
-          response(s)
+            if (s.fId === router.query.dynamic) {
+                s.fieldValues.push(val)
+                s.fieldValues.map(it => {
+                    arr.push(it)
+                })
+            }
+            response(s)
         })
         // console.log(arr)
         setGriddata(arr)
-       
+
         // localStorage.setItem('Formdata', JSON.stringify(retrievedData))
-     
-      }
-      async function response(s) {
+
+    }
+    async function response(s) {
         await
             fetch("/api/posts", {
                 method: "PUT",
@@ -105,7 +108,7 @@ export default function dynamicForm(props, db_1) {
             })
     };
 
-    
+
     // console.log(griddata)
     // console.log(columns)
     return (
@@ -115,50 +118,50 @@ export default function dynamicForm(props, db_1) {
             <Table columns={columns} dataSource={griddata} />
 
             <Modal title="Update Form Fields" visible={modalEdit} onCancel={editCancel} onOk={editOk}>
-      <Form layout="vertical" style={{ marginTop: "50px" }} form={input}>
-      <Form.Item  name="fId"  >
-                         <h1>{data.fId}</h1>
-                       </Form.Item>
-        
-                       {/* {console.log(data.fields)}       */}
-          {
-              
-            dataSource.map(
-              (fValues) => {
-                // console.log(fValues)
-                return(
-                 fValues.type === "String"?
-                   
-                    
-                      <Form.Item label={fValues.fieldName} name={fValues.fieldName}  >
-                        <Input type="text"/>
-                      </Form.Item>
-                    
-                  :
-                  fValues.type === "Number"?
-                   
-                    
-                      <Form.Item label={fValues.fieldName} name={fValues.fieldName}  >
-                        <Input type="number" />
-                      </Form.Item>
-                    
-                    :""
-                ) 
-              }
-            )
-          }
+                <Form layout="vertical" style={{ marginTop: "50px" }} form={input}>
+                    <Form.Item name="fId"  >
+                        <h1>{data.fId}</h1>
+                    </Form.Item>
 
-      </Form>
+                    {/* {console.log(data.fields)}       */}
+                    {
 
-      </Modal>
+                        dataSource.map(
+                            (fValues) => {
+                                // console.log(fValues)
+                                return (
+                                    fValues.type === "String" ?
+
+
+                                        <Form.Item label={fValues.fieldName} name={fValues.fieldName}  >
+                                            <Input type="text" />
+                                        </Form.Item>
+
+                                        :
+                                        fValues.type === "Number" ?
+
+
+                                            <Form.Item label={fValues.fieldName} name={fValues.fieldName}  >
+                                                <Input type="number" />
+                                            </Form.Item>
+
+                                            : ""
+                                )
+                            }
+                        )
+                    }
+
+                </Form>
+
+            </Modal>
 
         </center>
     )
 }
 export async function getStaticPaths() {
+    console.log("Called")
     const client = await clientPromise;
     const db = client.db("my_db");
-
     const db_1 = await db
         .collection("db_1")
         .find({})

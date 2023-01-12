@@ -94,29 +94,8 @@ const Grid = (props, db_1) => {
     const handleDelete = (record) => {
         console.log(record)
         console.log(tableData)
-        //    const client = await clientPromise;
-        // fetch(`https://data.mongodb-api.com/app/data-pqcux/endpoint/data/v1/action/find`, {
-        //     method: "GET",
-        //     // body: JSON.stringify(req.body),
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         "Access-Control-Request-Headers": "*",
-        //         "api-key": `2tovjSn3G4uiVKGeVHUbPeNqtA9RMi9q2ZJ2WPD6EaREWvE9s9FVH1MyE0e2z99M`
-        //     }
-        // }).then(response => {
-        //     console.log(response)
-        //     //   res.status(200).json(response)
-        // })
-        //     .catch(error => {
-        //         //   res.status(201).json(error)
-        //     });
-        // console.log(data2)
-
-        // const d = record.fId
+    
         let arr = []
-        // let arr2 = Object.values(props)
-        // let obj
-        // console.log(arr2[0])
        tableData.map((val) => {
             // console.log(val)
             if (val.fId !== record.fId) {
@@ -248,7 +227,7 @@ const Grid = (props, db_1) => {
             <Table columns={columns} dataSource={tableData}
                 onRow={(row) => ({
                     onClick: () => {
-                        //    console.log(row)
+                           console.log(row)
                         Router.push(`/formbuilder/${row.fId}`)
                     }
                 })} />
